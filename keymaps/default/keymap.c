@@ -1,6 +1,5 @@
 /* Copyright 2020 kushima8
  * Copyright 2020 utubo
- * Copyright 2020 haka
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,13 +39,13 @@ enum layer_number {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_FIRST] = LAYOUT(
     // ,-------+-------+-------+-------+-------+-------|                            |-------+-------+-------+-------+-------+-------.
-        KC_ESC ,KC_Q   ,KC_W   ,KC_COMM,KC_DOT ,KC_SCLN,                             KC_M   ,KC_R   ,KC_D   ,KC_Y   ,KC_P   ,KC_BSPC,
+        KC_ESC ,KC_Q   ,KC_W   ,KC_E   ,KC_R   ,KC_T   ,                             KC_Y   ,KC_U   ,KC_I   ,KC_O   ,KC_P   ,KC_BSPC,
     // |-------+-------+-------+-------+-------+-------|                            |-------+-------+-------+-------+-------+-------|
-        TT_CTLR,KC_A   ,KC_O   ,KC_E   ,KC_I   ,KC_U   ,                             KC_G   ,KC_T   ,KC_K   ,KC_S   ,KC_N   ,KC_QUOT,
+        TT_CTLR,KC_A   ,KC_S   ,KC_D   ,KC_F   ,KC_G   ,                             KC_H   ,KC_J   ,KC_K   ,KC_L   ,KC_SCLN,KC_QUOT,
     // |-------+-------+-------+-------+-------+-------|                            |-------+-------+-------+-------+-------+-------|
-        KC_LSFT,KC_Z   ,KC_X   ,KC_C   ,KC_V   ,KC_F   ,                             KC_B   ,KC_H   ,KC_J   ,KC_L   ,KC_SLSH,KC_LALT,
+        KC_LSFT,KC_Z   ,KC_X   ,KC_C   ,KC_V   ,KC_B   ,                             KC_N   ,KC_M   ,KC_COMM,KC_DOT ,KC_SLSH,KC_RSFT,
     // |-------+-------+-------+-------+-------+-------+-------|    |-------+-------+-------+-------+-------+-------+-------+-------|
-                                        KC_SPC ,RAISE  ,TENKEY,      SECOND ,LOWER  ,KC_ENT
+                                        RAISE  ,KC_SPC ,TENKEY,      SECOND ,KC_ENT ,LOWER
     //                                 `-------+-------+-------|    |-------+-------+-------'
     ),
     [_SECOND] = LAYOUT(
@@ -57,16 +56,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // |-------+-------+-------+-------+-------+-------|                            |-------+-------+-------+-------+-------+-------|
         KC_LSFT,KC_Z   ,KC_X   ,KC_C   ,KC_V   ,KC_B   ,                             KC_N   ,KC_M   ,KC_COMM,KC_DOT ,KC_SLSH,KC_RSFT,
     // |-------+-------+-------+-------+-------+-------+-------|    |-------+-------+-------+-------+-------+-------+-------+-------|
-                                        KC_SPC ,RAISE  ,TENKEY,      FIRST  ,LOWER  ,KC_ENT
+                                        RAISE  ,KC_SPC ,TENKEY,      FIRST  ,KC_ENT ,LOWER
     //                                 `-------+-------+-------|    |-------+-------+-------'
     ),
     [_LOWER] = LAYOUT(
     // ,-------+-------+-------+-------+-------+-------|                            |-------+-------+-------+-------+-------+-------.
         _______,KC_1   ,KC_2   ,KC_3   ,KC_4   ,KC_5   ,                             KC_6   ,KC_7   ,KC_8   ,KC_9   ,KC_0   ,_______,
     // |-------+-------+-------+-------+-------+-------|                            |-------+-------+-------+-------+-------+-------|
-        _______,_______,_______,_______,_______,_______,                             _______,KC_MINS,KC_EQL ,KC_LBRC,KC_RBRC,KC_BSLS,
+        _______,_______,_______,_______,_______,_______,                             KC_LEFT,KC_DOWN,KC_UP  ,KC_RGHT,KC_INS ,KC_DEL ,
     // |-------+-------+-------+-------+-------+-------|                            |-------+-------+-------+-------+-------+-------|
-        _______,_______,_______,_______,_______,_______,                             _______,KC_LEFT,KC_DOWN,KC_UP  ,KC_RGHT,_______,
+        _______,_______,_______,_______,_______,_______,                             KC_RALT,KC_APP ,KC_HOME,KC_END ,KC_PSCR,KC_RGUI,
     // |-------+-------+-------+-------+-------+-------+-------|    |-------+-------+-------+-------+-------+-------+-------+-------|
                                         _______,_______,_______,     _______,_______,_______
     //                                 `-------+-------+-------|    |-------+-------+-------'
@@ -116,59 +115,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     //                                 `-------+-------+-------|    |-------+-------+-------'
     ),
 };
-
-static bool lower_pressed = false;
-static bool raise_pressed = false;
-
-bool process_record_user(uint16_t keycode, keyrecord_t *record){
-    switch (keycode){
-        case LOWER:
-            if(record -> event.pressed){
-                lower_pressed =true;
-
-                layer_on(_LOWER);
-                update_tri_layer(_LOWER, _RAISE, _ADJUST);
-            } else {
-                layer_off(_LOWER);
-                update_tri_layer(_LOWER, _RAISE, _ADJUST);
-
-                if (lower_pressed){
-                    register_code(KC_ENT);
-                    unregister_code(KC_ENT);
-                }
-                lower_pressed = false;
-            }
-            return false;
-            break;
-        case RAISE:
-            if(record -> event.pressed){
-                raise_pressed =true;
-
-                layer_on(_RAISE);
-                update_tri_layer(_LOWER, _RAISE, _ADJUST);
-            } else {
-                layer_off(_RAISE);
-                update_tri_layer(_LOWER, _RAISE, _ADJUST);
-
-                if (raise_pressed){
-                    register_code(KC_SPC);
-                    unregister_code(KC_SPC);
-                }
-                raise_pressed = false;
-            }
-            return false;
-            break;
-        
-        default:
-            if (record -> event.pressed){
-                lower_pressed = false;
-                raise_pressed = false;
-            }
-            break;
-    }
-
-    return true;
-}
 
 uint32_t layer_state_set_user(uint32_t state) {
     return update_tri_layer_state(state, _LOWER, _RAISE, _ADJUST);
