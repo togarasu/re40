@@ -36,6 +36,7 @@ enum layer_number {
 #define CONFIG TO(_CONFIG)
 
 #define TT_CTLR  LCTL_T(KC_TAB)  // Hold=>Control, Tap=>TAB
+#define TT_CTSP  LCTL_T(KC_SPC)  // Hold=>Control, Tap=>TAB
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_FIRST] = LAYOUT(
@@ -46,7 +47,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // |-------+-------+-------+-------+-------+-------|                            |-------+-------+-------+-------+-------+-------|
         KC_LSFT,KC_Z   ,KC_X   ,KC_C   ,KC_V   ,KC_F   ,                             KC_B   ,KC_H   ,KC_J   ,KC_L   ,KC_SLSH,KC_RSFT,
     // |-------+-------+-------+-------+-------+-------+-------|    |-------+-------+-------+-------+-------+-------+-------+-------|
-                                        KC_LALT,RAISE  ,TENKEY,      SECOND ,LOWER  ,KC_ENT
+                                        KC_LALT,RAISE  ,TENKEY,      SECOND ,LOWER  ,TT_CTSP
     //                                 `-------+-------+-------|    |-------+-------+-------'
     ),
     [_SECOND] = LAYOUT(
