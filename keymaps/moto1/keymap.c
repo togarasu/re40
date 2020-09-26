@@ -36,7 +36,7 @@ enum layer_number {
 #define CONFIG TO(_CONFIG)
 
 #define TT_CTLR  LCTL_T(KC_TAB)  // Hold=>Control, Tap=>TAB
-#define TT_CTSP  LCTL_T(KC_SPC)  // Hold=>Control, Tap=>TAB
+#define TT_SFET  RSFT_T(KC_ENT)  // Hold=>Control, Tap=>TAB
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_FIRST] = LAYOUT(
@@ -45,9 +45,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // |-------+-------+-------+-------+-------+-------|                            |-------+-------+-------+-------+-------+-------|
         TT_CTLR,KC_A   ,KC_O   ,KC_E   ,KC_I   ,KC_U   ,                             KC_G   ,KC_T   ,KC_K   ,KC_S   ,KC_N   ,KC_QUOT,
     // |-------+-------+-------+-------+-------+-------|                            |-------+-------+-------+-------+-------+-------|
-        KC_LSFT,KC_Z   ,KC_X   ,KC_C   ,KC_V   ,KC_F   ,                             KC_B   ,KC_H   ,KC_J   ,KC_L   ,KC_SLSH,KC_RSFT,
+        KC_LSFT,KC_Z   ,KC_X   ,KC_C   ,KC_V   ,KC_F   ,                             KC_B   ,KC_H   ,KC_J   ,KC_L   ,KC_SLSH,TT_SFET,
     // |-------+-------+-------+-------+-------+-------+-------|    |-------+-------+-------+-------+-------+-------+-------+-------|
-                                        KC_LALT,RAISE  ,TENKEY,      SECOND ,LOWER  ,TT_CTSP
+                                        KC_SPC ,RAISE  ,TENKEY,      SECOND ,LOWER  ,KC_LALT
     //                                 `-------+-------+-------|    |-------+-------+-------'
     ),
     [_SECOND] = LAYOUT(
