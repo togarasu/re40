@@ -37,6 +37,7 @@ enum layer_number {
 
 #define TT_CTLR  LCTL_T(KC_TAB)  // Hold=>Control, Tap=>TAB
 #define TT_SFET  RSFT_T(KC_ENT)  // Hold=>Control, Tap=>TAB
+#define TT_CTSP  LCTL_T(LCTL(KC_SPC)) 
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_FIRST] = LAYOUT(
@@ -47,7 +48,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // |-------+-------+-------+-------+-------+-------|                            |-------+-------+-------+-------+-------+-------|
         KC_LSFT,KC_Z   ,KC_X   ,KC_C   ,KC_V   ,KC_F   ,                             KC_B   ,KC_H   ,KC_J   ,KC_L   ,KC_SLSH,TT_SFET,
     // |-------+-------+-------+-------+-------+-------+-------|    |-------+-------+-------+-------+-------+-------+-------+-------|
-                                        KC_SPC ,RAISE  ,TENKEY,      SECOND ,LOWER  ,KC_LALT
+                                        KC_LALT,RAISE  ,TENKEY,      SECOND ,LOWER  ,TT_CTSP
     //                                 `-------+-------+-------|    |-------+-------+-------'
     ),
     [_SECOND] = LAYOUT(
@@ -76,7 +77,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // ,-------+-------+-------+-------+-------+-------|                            |-------+-------+-------+-------+-------+-------.
         KC_TILD,KC_EXLM,KC_AT  ,KC_HASH,KC_DLR ,KC_PERC,                             KC_CIRC,KC_AMPR,KC_ASTR,KC_LPRN,KC_RPRN,KC_DEL ,
     // |-------+-------+-------+-------+-------+-------|                            |-------+-------+-------+-------+-------+-------|
-        _______,_______,_______,_______,_______,_______,                             _______,KC_UNDS,KC_PLUS,KC_LCBR,KC_RCBR,KC_PIPE,
+        TT_CTSP,_______,_______,_______,_______,_______,                             _______,KC_UNDS,KC_PLUS,KC_LCBR,KC_RCBR,KC_PIPE,
     // |-------+-------+-------+-------+-------+-------|                            |-------+-------+-------+-------+-------+-------|
         _______,_______,_______,_______,_______,_______,                             _______,_______,_______,_______,_______,_______,
     // |-------+-------+-------+-------+-------+-------+-------|    |-------+-------+-------+-------+-------+-------+-------+-------|
@@ -85,7 +86,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
     [_ADJUST] = LAYOUT(
     // ,-------+-------+-------+-------+-------+-------|                            |-------+-------+-------+-------+-------+-------.
-        _______,KC_F1  ,KC_F2  ,KC_F3  ,KC_F4  ,KC_F5  ,                             KC_F6  ,KC_7   ,KC_F8  ,KC_F9  ,KC_F10 ,_______,
+        _______,KC_F1  ,KC_F2  ,KC_F3  ,KC_F4  ,KC_F5  ,                             KC_F6  ,KC_F7  ,KC_F8  ,KC_F9  ,KC_F10 ,_______,
     // |-------+-------+-------+-------+-------+-------|                            |-------+-------+-------+-------+-------+-------|
         _______,KC_F11 ,KC_F12 ,KC_F13 ,KC_F14 ,KC_F15 ,                             KC_F16 ,KC_F17 ,KC_F18 ,KC_F19 ,KC_F20 ,_______,
     // |-------+-------+-------+-------+-------+-------|                            |-------+-------+-------+-------+-------+-------|
@@ -117,6 +118,62 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     //                                 `-------+-------+-------|    |-------+-------+-------'
     ),
 };
+
+static bool lower_pressed = false;
+static bool raise_pressed = false;
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record){
+    switch (keycode){
+/*
+        case LOWER:
+            if(record -> event.pressed){
+                lower_pressed =true;
+
+                layer_on(_LOWER);
+                update_tri_layer(_LOWER, _RAISE, _ADJUST);
+            } else {
+                layer_off(_LOWER);
+                update_tri_layer(_LOWER, _RAISE, _ADJUST);
+
+                if (lower_pressed){
+                    register_code(KC_LCTL);
+                    register_code(KC_SPC);
+                    unregister_code(KC_LCTL);
+                    unregister_code(KC_SPC);
+                }
+                lower_pressed = false;
+            }
+            return false;
+            break;
+*/
+        case RAISE:
+            if(record -> event.pressed){
+                raise_pressed =true;
+
+                layer_on(_RAISE);
+                update_tri_layer(_LOWER, _RAISE, _ADJUST);
+            } else {
+                layer_off(_RAISE);
+                update_tri_layer(_LOWER, _RAISE, _ADJUST);
+
+                if (raise_pressed){
+                    register_code(KC_SPC);
+                    unregister_code(KC_SPC);
+                }
+                raise_pressed = false;
+            }
+            return false;
+            break;
+        default:
+            if (record -> event.pressed){
+                lower_pressed = false;
+                raise_pressed = false;
+            }
+            break;
+    }
+
+    return true;
+}
 
 uint32_t layer_state_set_user(uint32_t state) {
     return update_tri_layer_state(state, _LOWER, _RAISE, _ADJUST);
@@ -210,7 +267,7 @@ void encoder_update_user(uint8_t index, bool clockwise) {
         switch (get_highest_layer(layer_state)) {
             case _FIRST:
             case _SECOND:
-                tap_code(clockwise ? KC_WH_U : KC_WH_D);
+                tap_code(clockwise ? KC_WH_D : KC_WH_U);
                 break;
             default:
                 break;
